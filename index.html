@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="よく使うコマンドをワンクリックでコピー">
+  <title>Command Copy</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>⌘ Command Copy</h1>
+    <p>コマンドをクリックでコピー</p>
+  </header>
+
+  <main>
+    <div class="controls">
+      <input type="search" id="search" placeholder="検索...(例: push, docker)" autocomplete="off" autofocus>
+      <div id="categories" class="categories"></div>
+    </div>
+
+    <div id="list"></div>
+    <p id="empty" class="empty hidden">見つかりませんでした</p>
+  </main>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="main.js"></script>
+</body>
+</html>
