@@ -6,8 +6,14 @@
       {
         "title": "usbmuxd",
         "steps": [
-          { "desc": "スリープ対策を有効化", "cmd": "termux-wake-lock" },
-          { "desc": "USBデバイスのパスを確認", "cmd": "termux-usb -l" },
+          {
+            "desc": "スリープ対策を有効化",
+            "cmd": "termux-wake-lock"
+          },
+          {
+            "desc": "USBデバイスのパスを確認",
+            "cmd": "termux-usb -l"
+          },
           {
             "desc": "usbmuxdを起動",
             "note": "(2)で確認したパスが/dev/bus/usb/001/002と異なる場合は状況に応じて書き換える",
@@ -18,18 +24,39 @@
       {
         "title": "X11用セッション",
         "steps": [
-          { "desc": "X11を起動", "cmd": "termux-x11 :1 -legacy-drawing" }
+          {
+            "desc": "X11を起動",
+            "cmd": "termux-x11 :1 -legacy-drawing"
+          }
         ]
       },
       {
         "title": "作業用セッション",
         "steps": [
-          { "desc": "USB通信を確認", "cmd": "USBMUXD_SOCKET_ADDRESS=\"UNIX:$PREFIX/var/run/usbmuxd\" idevice_id -l" },
-          { "desc": "Ubuntu環境に入る", "cmd": "proot-distro login ubuntu --shared-tmp --bind \"$PREFIX/var/run:/run\" --bind \"$HOME/storage/downloads:/mnt/downloads\"" },
-          { "desc": "実行時ディレクトリを用意", "cmd": "install -d -m 700 /tmp/runtime-root" },
-          { "desc": "環境変数を設定", "cmd": "export XDG_RUNTIME_DIR=/tmp/runtime-root" },
-          { "desc": "USBデバイスとの通信を確認", "cmd": "USBMUXD_SOCKET_ADDRESS=\"UNIX:/run/usbmuxd\" ideviceinfo -k ProductVersion" },
-          { "desc": "X11上にターミナルを表示", "cmd": "DISPLAY=:1 xterm" }
+          {
+            "desc": "USB通信を確認",
+            "cmd": "USBMUXD_SOCKET_ADDRESS=\"UNIX:$PREFIX/var/run/usbmuxd\" idevice_id -l"
+          },
+          {
+            "desc": "Ubuntu環境に入る",
+            "cmd": "proot-distro login ubuntu --shared-tmp --bind \"$PREFIX/var/run:/run\" --bind \"$HOME/storage/downloads:/mnt/downloads\""
+          },
+          {
+            "desc": "実行時ディレクトリを用意",
+            "cmd": "install -d -m 700 /tmp/runtime-root"
+          },
+          {
+            "desc": "環境変数を設定",
+            "cmd": "export XDG_RUNTIME_DIR=/tmp/runtime-root"
+          },
+          {
+            "desc": "USBデバイスとの通信を確認",
+            "cmd": "USBMUXD_SOCKET_ADDRESS=\"UNIX:/run/usbmuxd\" ideviceinfo -k ProductVersion"
+          },
+          {
+            "desc": "X11上にターミナルを表示",
+            "cmd": "DISPLAY=:1 xterm"
+          }
         ]
       },
       {
@@ -60,106 +87,10 @@
       {
         "title": "Cloudflare Tunnel",
         "steps": [
-          { "desc": "cloudflare tunnelを起動", "cmd": "cloudflared tunnel --protocol http2 run opencode" }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "git-basics",
-    "title": "Gitの基本操作",
-    "sections": [
-      {
-        "title": "最初の準備",
-        "steps": [
-          { "desc": "リポジトリを初期化", "cmd": "git init" },
-          { "desc": "ユーザー名を設定", "cmd": "git config --global user.name \"Your Name\"" },
-          { "desc": "メールアドレスを設定", "cmd": "git config --global user.email \"you@example.com\"" }
-        ]
-      },
-      {
-        "title": "変更を保存する",
-        "steps": [
-          { "desc": "変更状況を確認", "cmd": "git status" },
-          { "desc": "全変更をステージング", "cmd": "git add -A" },
-          { "desc": "コミットを作成", "cmd": "git commit -m \"message\"" },
-          { "desc": "リモートへプッシュ", "cmd": "git push origin main" }
-        ]
-      },
-      {
-        "title": "履歴とブランチ",
-        "steps": [
-          { "desc": "直近10コミットを表示", "cmd": "git log --oneline -10" },
-          { "desc": "全ブランチを表示", "cmd": "git branch -a" },
-          { "desc": "新規ブランチを作成して切替", "cmd": "git checkout -b feature/x" },
-          { "desc": "変更を一時退避", "cmd": "git stash" },
-          { "desc": "退避した変更を復元", "cmd": "git stash pop" }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "python-venv",
-    "title": "Python仮想環境のセットアップ",
-    "sections": [
-      {
-        "title": "仮想環境",
-        "steps": [
-          { "desc": "仮想環境を作成", "cmd": "python3 -m venv .venv" },
-          { "desc": "仮想環境を有効化", "cmd": "source .venv/bin/activate" },
-          { "desc": "依存パッケージをインストール", "cmd": "pip install -r requirements.txt" }
-        ]
-      },
-      {
-        "title": "パッケージ管理",
-        "steps": [
-          { "desc": "インストール済みパッケージを表示", "cmd": "pip list" },
-          { "desc": "依存関係を書き出し", "cmd": "pip freeze > requirements.txt" },
-          { "desc": "スクリプトを実行", "cmd": "python3 main.py" }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "docker-basics",
-    "title": "Docker基本操作",
-    "sections": [
-      {
-        "title": "ビルドと起動",
-        "steps": [
-          { "desc": "イメージをビルド", "cmd": "docker build -t app ." },
-          { "desc": "コンテナをバックグラウンド起動", "cmd": "docker compose up -d" },
-          { "desc": "コンテナを停止・削除", "cmd": "docker compose down" }
-        ]
-      },
-      {
-        "title": "確認",
-        "steps": [
-          { "desc": "稼働中コンテナを一覧表示", "cmd": "docker ps" },
-          { "desc": "イメージを一覧表示", "cmd": "docker images" },
-          { "desc": "コンテナのログを追尾表示", "cmd": "docker compose logs -f" },
-          { "desc": "コンテナ内でシェルを起動", "cmd": "docker exec -it <container> bash" }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "github-pages",
-    "title": "GitHub Pagesでサイトを公開",
-    "sections": [
-      {
-        "title": "ローカル準備",
-        "steps": [
-          { "desc": "リポジトリを初期化", "cmd": "git init" },
-          { "desc": "全ファイルをコミット", "cmd": "git add -A && git commit -m \"Initial commit\"" }
-        ]
-      },
-      {
-        "title": "デプロイ",
-        "steps": [
-          { "desc": "リモートリポジトリを登録", "cmd": "git remote add origin https://github.com/<user>/<repo>.git" },
-          { "desc": "リモートへプッシュ", "cmd": "git push -u origin master" },
-          { "desc": "GitHub Pagesを有効化", "note": "<user>/<repo>を書き換える", "cmd": "gh api -X POST repos/<user>/<repo>/pages -f \"source[branch]=master\" -f \"source[path]=/\"" }
+          {
+            "desc": "cloudflare tunnelを起動",
+            "cmd": "cloudflared tunnel --protocol http2 run opencode"
+          }
         ]
       }
     ]
