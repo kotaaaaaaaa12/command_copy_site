@@ -6,7 +6,7 @@ const toastEl = document.getElementById("toast");
 const searchEl = document.getElementById("search");
 
 async function load() {
-  const res = await fetch("sets.json");
+  const res = await fetch(`sets.json?t=${Date.now()}`, { cache: "no-store" });
   state.sets = await res.json();
   render();
 }
