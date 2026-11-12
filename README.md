@@ -1,24 +1,33 @@
 # Command Copy Site
 
-よく使うコマンドをワンクリックでコピーできるシンプルな静的サイト。
-GitHub Pages で公開できます。
+「コマンドセット(手順書)」を登録し、ステップ単位 or セット全体で一括コピーできる静的サイト。
+GitHub Pages で公開: https://kotaaaaaaaa12.github.io/command_copy_site/
 
 ## 使い方
 
-- 検索窓でコマンドを絞り込み
-- カテゴリボタンでフィルタ
-- カードをクリック(または Enter)でクリップボードにコピー
+- 検索窓でセット・セクション・ステップを絞り込み
+- ステップ名 / コマンドをクリックでコピー
+- 「全コピー」ボタンでセット全体を番号付きテキスト形式で一括コピー
 
-## コマンドを追加する
+## セットを追加する
 
-`commands.json` に1行追加するだけ:
+`sets.json` に追加するだけ:
 
 ```json
-{ "cmd": "git pull", "desc": "プル", "category": "git" }
+{
+  "id": "unique-id",
+  "title": "セット名",
+  "sections": [
+    {
+      "title": "[1]みたいなセクション名",
+      "steps": [
+        { "desc": "ステップ名", "cmd": "command --here" },
+        { "desc": "ステップ名", "note": "注記(省略可)", "cmd": "command" }
+      ]
+    }
+  ]
+}
 ```
-
-`category` が新しい値ならカテゴリボタンも自動で追加されます
-(`main.js` の `CATEGORY_LABELS` に表示名を足すと日本語ラベルになります)。
 
 ## ローカルで動かす
 
@@ -32,6 +41,4 @@ python3 -m http.server 8000
 
 ## 公開(GitHub Pages)
 
-1. GitHub にリポジトリを作成して push
-2. Settings → Pages → Source: `main` ブランチ / `/ (root)`
-3. `https://<ユーザ名>.github.io/command_copy_site/` で公開される
+master ブランチ / root で公開済み。push すると自動反映されます。

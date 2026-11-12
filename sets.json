@@ -1,0 +1,47 @@
+[
+  {
+    "id": "termux-ipa-sideloading",
+    "title": "AndroidのTermuxからIPAをサイドロードする",
+    "sections": [
+      {
+        "title": "usbmuxd",
+        "steps": [
+          { "desc": "スリープ対策", "cmd": "termux-wake-lock" },
+          { "desc": "USB機器パス確認", "cmd": "termux-usb -l" },
+          {
+            "desc": "usbmuxd起動",
+            "note": "(2)のパスが/dev/bus/usb/001/002ではなかった場合状況に応じて書き換える",
+            "cmd": "termux-usb -r -E -e \"usbmuxd -f -v --socket $PREFIX/var/run/usbmuxd\" /dev/bus/usb/001/002"
+          }
+        ]
+      },
+      {
+        "title": "X11用セッション",
+        "steps": [
+          { "desc": "X11起動", "cmd": "termux-x11 :1 -legacy-drawing" }
+        ]
+      },
+      {
+        "title": "作業用セッション",
+        "steps": [
+          { "desc": "USB通信確認", "cmd": "USBMUXD_SOCKET_ADDRESS=\"UNIX:$PREFIX/var/run/usbmuxd\" idevice_id -l" },
+          { "desc": "Ubuntuへ入る", "cmd": "proot-distro login ubuntu --shared-tmp --bind \"$PREFIX/var/run:/run\" --bind \"$HOME/storage/downloads:/mnt/downloads\"" },
+          { "desc": "実行時ディレクトリを用意", "cmd": "install -d -m 700 /tmp/runtime-root" },
+          { "desc": "環境変数設定", "cmd": "export XDG_RUNTIME_DIR=/tmp/runtime-root" },
+          { "desc": "USB機器との通信確認", "cmd": "USBMUXD_SOCKET_ADDRESS=\"UNIX:/run/usbmuxd\" ideviceinfo -k ProductVersion" },
+          { "desc": "X11上にターミナル召喚", "cmd": "DISPLAY=:1 xterm" }
+        ]
+      },
+      {
+        "title": "iLoader",
+        "steps": [
+          {
+            "desc": "iLoaderを起動",
+            "note": "X11上のターミナルで実行",
+            "cmd": "XDG_RUNTIME_DIR=/tmp/runtime-root DISPLAY=:1 GDK_BACKEND=x11 LIBGL_ALWAYS_SOFTWARE=1 WEBKIT_DISABLE_COMPOSITING_MODE=1 USBMUXD_SOCKET_ADDRESS=\"/run/usbmuxd\" dbus-launch --exit-with-session iloader"
+          }
+        ]
+      }
+    ]
+  }
+]
