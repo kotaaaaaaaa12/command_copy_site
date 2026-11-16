@@ -64,8 +64,28 @@
         ]
       },
       {
-        "title": "4. iLoader",
-        "description": "iLoaderをX11上で起動する。",
+        "title": "4. ペアリング管理（idevicepair）",
+        "description": "libimobiledeviceのCLIを使用して、iPhoneとのペアリング状態を確認・解除・再登録する。",
+        "steps": [
+          {
+            "desc": "現在のペアリング状態を確認する",
+            "cmd": "USBMUXD_SOCKET_ADDRESS=\"UNIX:/run/usbmuxd\" idevicepair validate"
+          },
+          {
+            "desc": "既存のペアリングを解除する",
+            "note": "ペアリングの再登録が必要な場合のみ実行する。通常の確認では実行しない。",
+            "cmd": "USBMUXD_SOCKET_ADDRESS=\"UNIX:/run/usbmuxd\" idevicepair unpair"
+          },
+          {
+            "desc": "iPhoneを再ペアリングする",
+            "note": "unpairの実行後に続けて実行する。iPhone側に確認画面が表示された場合は操作する。",
+            "cmd": "USBMUXD_SOCKET_ADDRESS=\"UNIX:/run/usbmuxd\" idevicepair pair"
+          }
+        ]
+      },
+      {
+        "title": "5. iLoader",
+        "description": "X11上でiLoaderを起動して、ペアリングファイルを作成・管理する。",
         "steps": [
           {
             "desc": "iLoaderを起動する",
@@ -75,7 +95,7 @@
         ]
       },
       {
-        "title": "5. idevice_pair",
+        "title": "6. idevice_pair",
         "description": "iLoaderとは別の方法でペアリングファイルを作成する。LiveContainerなどで使用する。",
         "steps": [
           {
@@ -84,7 +104,7 @@
           },
           {
             "desc": "AppImageをダウンロードする",
-            "note": "使用するCPUアーキテクチャに合ったAppImageを取得する。",
+            "note": "以下はARM64（aarch64）向け。異なるCPUアーキテクチャでは対応するファイルを使用する。",
             "cmd": "wget -O idevice_pair.AppImage \"https://sourceforge.net/projects/idevice-pair.mirror/files/v1.1.0/idevice_pair--linux-aarch64.AppImage/download\""
           },
           {
@@ -107,7 +127,7 @@
           },
           {
             "desc": "ペアリングファイルを作成する",
-            "note": "アプリの画面からiPhoneを選択し、ペアリングファイルを作成する。既存のペアリング情報は削除しない。"
+            "note": "アプリの画面からiPhoneを選択して作成する。既存のペアリング情報は削除しない。"
           }
         ]
       }
@@ -126,17 +146,4 @@
             "cmd": "opencode serve --hostname 127.0.0.1 --port 4096 > ~/opencode.log 2>&1 &"
           }
         ]
-      },
-      {
-        "title": "2. Cloudflare Tunnel",
-        "description": "Cloudflare Tunnelを利用してWebサーバーを外部に公開する。",
-        "steps": [
-          {
-            "desc": "Cloudflare Tunnelを起動する",
-            "cmd": "cloudflared tunnel --protocol http2 run opencode"
-          }
-        ]
       }
-    ]
-  }
-]
