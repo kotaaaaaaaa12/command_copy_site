@@ -84,50 +84,18 @@
         ]
       },
       {
-        "title": "5. iLoader",
-        "description": "X11上でiLoaderを起動して、ペアリングファイルを作成・管理する。",
+        "title": "5. ペアリングツール",
+        "description": "用途に応じてiLoaderまたはidevice_pairを起動する。",
         "steps": [
           {
             "desc": "iLoaderを起動する",
             "note": "X11上のターミナルで実行する。",
             "cmd": "XDG_RUNTIME_DIR=/tmp/runtime-root DISPLAY=:1 GDK_BACKEND=x11 LIBGL_ALWAYS_SOFTWARE=1 WEBKIT_DISABLE_COMPOSITING_MODE=1 USBMUXD_SOCKET_ADDRESS=\"/run/usbmuxd\" dbus-launch --exit-with-session iloader"
-          }
-        ]
-      },
-      {
-        "title": "6. idevice_pair",
-        "description": "iLoaderとは別の方法でペアリングファイルを作成する。LiveContainerなどで使用する。",
-        "steps": [
-          {
-            "desc": "作業ディレクトリを作成する",
-            "cmd": "mkdir -p ~/idevice-pair && cd ~/idevice-pair"
-          },
-          {
-            "desc": "AppImageをダウンロードする",
-            "note": "以下はARM64（aarch64）向け。異なるCPUアーキテクチャでは対応するファイルを使用する。",
-            "cmd": "wget -O idevice_pair.AppImage \"https://sourceforge.net/projects/idevice-pair.mirror/files/v1.1.0/idevice_pair--linux-aarch64.AppImage/download\""
-          },
-          {
-            "desc": "実行権限を付与する",
-            "cmd": "chmod +x idevice_pair.AppImage"
-          },
-          {
-            "desc": "AppImageを展開する",
-            "note": "Termuxのproot環境ではFUSEを使用できない場合があるため、展開して起動する。",
-            "cmd": "./idevice_pair.AppImage --appimage-extract"
-          },
-          {
-            "desc": "展開したアプリのディレクトリに移動する",
-            "cmd": "cd ~/idevice-pair/squashfs-root"
           },
           {
             "desc": "idevice_pairを起動する",
-            "note": "Ubuntuの作業用セッションで実行する。X11とUSB通信の環境変数を指定する。",
-            "cmd": "XDG_RUNTIME_DIR=/tmp/runtime-root DISPLAY=:1 GDK_BACKEND=x11 LIBGL_ALWAYS_SOFTWARE=1 USBMUXD_SOCKET_ADDRESS=\"UNIX:/run/usbmuxd\" ./AppRun"
-          },
-          {
-            "desc": "ペアリングファイルを作成する",
-            "note": "アプリの画面からiPhoneを選択して作成する。既存のペアリング情報は削除しない。"
+            "note": "iLoaderとは別のペアリングファイル作成ツール。AppImageは事前に展開済みであること。Ubuntuの作業用セッションで実行する。",
+            "cmd": "cd ~/idevice-pair/squashfs-root && XDG_RUNTIME_DIR=/tmp/runtime-root DISPLAY=:1 GDK_BACKEND=x11 LIBGL_ALWAYS_SOFTWARE=1 USBMUXD_SOCKET_ADDRESS=\"UNIX:/run/usbmuxd\" ./AppRun"
           }
         ]
       }
@@ -146,4 +114,17 @@
             "cmd": "opencode serve --hostname 127.0.0.1 --port 4096 > ~/opencode.log 2>&1 &"
           }
         ]
+      },
+      {
+        "title": "2. Cloudflare Tunnel",
+        "description": "Cloudflare Tunnelを利用してWebサーバーを外部に公開する。",
+        "steps": [
+          {
+            "desc": "Cloudflare Tunnelを起動する",
+            "cmd": "cloudflared tunnel --protocol http2 run opencode"
+          }
+        ]
       }
+    ]
+  }
+]
