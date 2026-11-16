@@ -1,40 +1,44 @@
+
 [
   {
     "id": "termux-ipa-sideloading",
     "title": "TermuxからIPAをサイドロードする",
     "sections": [
       {
-        "title": "usbmuxd",
+        "title": "1. USB接続・usbmuxd",
+        "description": "TermuxからiPhoneとのUSB通信を確立する。",
         "steps": [
           {
-            "desc": "スリープ対策を有効化",
+            "desc": "スリープ対策を有効にする",
             "cmd": "termux-wake-lock"
           },
           {
-            "desc": "USBデバイスのパスを確認",
+            "desc": "接続されているUSBデバイスを確認する",
             "cmd": "termux-usb -l"
           },
           {
-            "desc": "usbmuxdを起動",
-            "note": "(2)で確認したパスが/dev/bus/usb/001/002と異なる場合は状況に応じて書き換える",
+            "desc": "usbmuxdを起動する",
+            "note": "USBデバイスのパスが /dev/bus/usb/001/002 と異なる場合は、確認したパスに書き換える。",
             "cmd": "termux-usb -r -E -e \"usbmuxd -f -v --socket $PREFIX/var/run/usbmuxd\" /dev/bus/usb/001/002"
           }
         ]
       },
       {
-        "title": "X11用セッション",
+        "title": "2. X11セッション",
+        "description": "Ubuntu上のGUIアプリをAndroid画面に表示するためのX11サーバーを起動する。",
         "steps": [
           {
-            "desc": "X11を起動",
+            "desc": "X11を起動する",
             "cmd": "termux-x11 :1 -legacy-drawing"
           }
         ]
       },
       {
-        "title": "作業用セッション",
+        "title": "3. Ubuntu作業環境",
+        "description": "USB通信とX11を利用できるUbuntu環境を準備する。",
         "steps": [
           {
-            "desc": "USB通信を確認",
+            "desc": "USB通信を確認する（Termux側）",
             "cmd": "USBMUXD_SOCKET_ADDRESS=\"UNIX:$PREFIX/var/run/usbmuxd\" idevice_id -l"
           },
           {
@@ -42,30 +46,68 @@
             "cmd": "proot-distro login ubuntu --shared-tmp --bind \"$PREFIX/var/run:/run\" --bind \"$HOME/storage/downloads:/mnt/downloads\""
           },
           {
-            "desc": "実行時ディレクトリを用意",
+            "desc": "実行時ディレクトリを作成する",
             "cmd": "install -d -m 700 /tmp/runtime-root"
           },
           {
-            "desc": "環境変数を設定",
+            "desc": "XDG_RUNTIME_DIRを設定する",
             "cmd": "export XDG_RUNTIME_DIR=/tmp/runtime-root"
           },
           {
-            "desc": "USBデバイスとの通信を確認",
+            "desc": "USBデバイスとの通信を確認する（Ubuntu側）",
             "cmd": "USBMUXD_SOCKET_ADDRESS=\"UNIX:/run/usbmuxd\" ideviceinfo -k ProductVersion"
           },
           {
-            "desc": "X11上にターミナルを表示",
+            "desc": "X11上にターミナルを表示する",
             "cmd": "DISPLAY=:1 xterm"
           }
         ]
       },
       {
-        "title": "iLoader",
+        "title": "4. iLoader",
+        "description": "iLoaderをX11上で起動する。",
         "steps": [
           {
-            "desc": "iLoaderを起動",
-            "note": "X11上のターミナルで実行",
+            "desc": "iLoaderを起動する",
+            "note": "X11上のターミナルで実行する。",
             "cmd": "XDG_RUNTIME_DIR=/tmp/runtime-root DISPLAY=:1 GDK_BACKEND=x11 LIBGL_ALWAYS_SOFTWARE=1 WEBKIT_DISABLE_COMPOSITING_MODE=1 USBMUXD_SOCKET_ADDRESS=\"/run/usbmuxd\" dbus-launch --exit-with-session iloader"
+          }
+        ]
+      },
+      {
+        "title": "5. idevice_pair",
+        "description": "iLoaderとは別の方法でペアリングファイルを作成する。LiveContainerなどで使用する。",
+        "steps": [
+          {
+            "desc": "作業ディレクトリを作成する",
+            "cmd": "mkdir -p ~/idevice-pair && cd ~/idevice-pair"
+          },
+          {
+            "desc": "AppImageをダウンロードする",
+            "note": "使用するCPUアーキテクチャに合ったAppImageを取得する。",
+            "cmd": "wget -O idevice_pair.AppImage \"https://sourceforge.net/projects/idevice-pair.mirror/files/v1.1.0/idevice_pair--linux-aarch64.AppImage/download\""
+          },
+          {
+            "desc": "実行権限を付与する",
+            "cmd": "chmod +x idevice_pair.AppImage"
+          },
+          {
+            "desc": "AppImageを展開する",
+            "note": "Termuxのproot環境ではFUSEを使用できない場合があるため、展開して起動する。",
+            "cmd": "./idevice_pair.AppImage --appimage-extract"
+          },
+          {
+            "desc": "展開したアプリのディレクトリに移動する",
+            "cmd": "cd ~/idevice-pair/squashfs-root"
+          },
+          {
+            "desc": "idevice_pairを起動する",
+            "note": "Ubuntuの作業用セッションで実行する。X11とUSB通信の環境変数を指定する。",
+            "cmd": "XDG_RUNTIME_DIR=/tmp/runtime-root DISPLAY=:1 GDK_BACKEND=x11 LIBGL_ALWAYS_SOFTWARE=1 USBMUXD_SOCKET_ADDRESS=\"UNIX:/run/usbmuxd\" ./AppRun"
+          },
+          {
+            "desc": "ペアリングファイルを作成する",
+            "note": "アプリの画面からiPhoneを選択し、ペアリングファイルを作成する。既存のペアリング情報は削除しない。"
           }
         ]
       }
@@ -73,22 +115,24 @@
   },
   {
     "id": "opencode-public",
-    "title": "opencode web serverを公開する",
+    "title": "OpenCode Webサーバーを公開する",
     "sections": [
       {
-        "title": "バックエンド",
+        "title": "1. バックエンド",
+        "description": "OpenCodeのWebサーバーをローカルで起動する。",
         "steps": [
           {
-            "desc": "opencode web serverをバックエンドで起動",
+            "desc": "OpenCode Webサーバーをバックグラウンドで起動する",
             "cmd": "opencode serve --hostname 127.0.0.1 --port 4096 > ~/opencode.log 2>&1 &"
           }
         ]
       },
       {
-        "title": "Cloudflare Tunnel",
+        "title": "2. Cloudflare Tunnel",
+        "description": "Cloudflare Tunnelを利用してWebサーバーを外部に公開する。",
         "steps": [
           {
-            "desc": "cloudflare tunnelを起動",
+            "desc": "Cloudflare Tunnelを起動する",
             "cmd": "cloudflared tunnel --protocol http2 run opencode"
           }
         ]
